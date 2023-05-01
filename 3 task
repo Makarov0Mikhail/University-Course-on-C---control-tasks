@@ -1,0 +1,132 @@
+#pragma once            // здесь начинается файл заголовков
+#include <iostream>
+class Vector {
+private:
+	int* cord;
+	int dim;
+public:
+
+	Vector(int dim);
+	Vector(const Vector& v);
+	void random();
+	Vector operator[](int index);
+	Vector operator+(const Vector& v) const;
+	Vector operator-(const Vector& v) const;
+	int operator*(const Vector& v) const;
+	Vector operator*(int b) const;
+	friend Vector operator*(int b, const Vector& v);
+	friend std::ostream& operator<<(std::ostream& os, const Vector& v);
+	~Vector();
+};
+                               
+                               
+                               //  здесь начинается файл cpp
+                                
+                                
+#include "Vector.h"
+#include <iostream>
+
+Vector::Vector(int dim) {         //      конструктор класса  
+	this->dim = dim;
+	cord = new int[dim];
+	for (int i = 0; i < dim; i++) {
+		cord[i] = rand() % 11 - 5;
+	}
+}
+Vector::Vector(const Vector& v) {        //       конструктор копирования
+	delete[] cord;
+	dim = v.dim;
+	cord = new int[dim];
+	for (int i = 0; i < dim; i++) {
+		cord[i] = v.cord[i];
+	}
+}
+void Vector::random() {               //      заполнение вектора случайными значениями
+	for (int i = 0; i < dim; i++) {
+		cord[i] = rand() % 11 - 5;
+	}
+}
+Vector Vector::operator[](int index) {       //     оператор вывода нужного элемента вектора
+	return cord[index - 1];
+}
+Vector Vector::operator+(const Vector& v) const {        //        оператор сложения векторов
+	Vector a(dim);
+	if (dim != v.dim) {
+		std::cout << "dimension error" << "\n";
+		return *this;
+	}
+	for (int i = 0; i < dim; i++) {
+		a.cord[i] = cord[i] + v.cord[i];
+	}
+	return a;
+}
+Vector Vector::operator-(const Vector& v) const {      //     оператор разности векторов
+	Vector a(dim);
+	if (dim != v.dim) {
+		std::cout << "dimension error" << "\n";
+		return *this;
+	}
+	for (int i = 0; i < dim; i++) {
+		a.cord[i] = cord[i] - v.cord[i];
+	}
+	return a;
+}
+int Vector::operator*(const Vector& v) const {        //      оператор скалярного умножения векторов
+	if (dim != v.dim) {
+		int err = 0;
+		std::cout << "dimension error" << "\n";
+		for (int i = 0; i < dim; i++) {
+			err += cord[i];
+		}
+		return err; // если размерности не совпадают
+	}
+	int mult = 0;
+	for (int i = 0; i < dim; i++) {
+		mult += cord[i] * v.cord[i];
+	}
+	return mult;
+}
+Vector Vector::operator*(int b) const {        //    оператор умножения вектора на число
+	Vector a(dim);
+	for (int i = 0; i < dim; i++) {
+		a.cord[i] = b * cord[i];
+	}
+	return a;
+}
+Vector operator*(int b, const Vector& v) {     //   оператор умножения числа на вектор
+	return v * b;
+}
+std::ostream& operator<<(std::ostream& os, const Vector& v) {   //   оператор вывода
+	os << "("; 
+	for (int i = 0; i < v.dim; i++) {
+		os << v.cord[i];
+		if (i < v.dim - 1) {
+			os << ";";
+		}
+	}
+	os << ")" << "\n";
+	return os;
+}
+Vector::~Vector() {
+	delete[] cord;
+}
+
+                            //   здесь начинается main
+#include <iostream>
+#include "Vector.h"
+
+
+int main()
+{
+	srand(time(NULL));
+	Vector a(3);
+	Vector b(3); 
+	Vector q(a); 
+	Vector c = a + b;
+	int result = a * b;
+    
+	std::cout << result << std::endl;
+	std::cout << c << std::endl;
+	std::cout << a[2] << std::endl;
+	std::cout << a * 3;
+  }
