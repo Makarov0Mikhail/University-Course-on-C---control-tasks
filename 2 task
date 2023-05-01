@@ -1,0 +1,145 @@
+#include "Plenty.h"                  // здесь начался файл cpp
+#include <iostream>
+#include <cstdlib>
+Plenty::Plenty(int size = 1) {       //    конструктор класса
+	if (size != 0) {
+		this->size = size;
+		list = new int[size];
+		list[0] = rand() % 20 - 5;
+		for (int i = 1; i < size; i++) {
+			do {
+				list[i] = rand() % 20 - 5;
+			} while (!chek(list, i, list[i]));
+		}
+	}
+}
+Plenty::~Plenty() {                   //   деструктор класса
+	delete[] list;
+}
+Plenty::Plenty(const Plenty& p) {       //    конструктор копирования
+	delete[] list;
+	size = p.size;
+	list = new int[size];
+	for (int i = 0; i < size; i++) {
+		list[i] = p.list[i];
+	}
+}
+Plenty& Plenty::add(int value) {            //      оператор добавления элемента в конец множества
+	int* buf = new int[size];
+	for (int i = 0; i < size; i++) {
+		buf[i] = list[i];
+	}
+	delete[] list;
+	size += 1;
+	list = new int[size];
+	for (int i = 0; i < size; i++) {
+		list[i] = buf[i];
+	}
+	list[size - 1] = value;
+	delete[] buf;
+	return *this;
+}
+Plenty Plenty::operator+(const Plenty& p) {            //      оператор сложения множеств
+	int cur = 0;
+	for (int i = 0; i < p.size; i++) {
+		if (chek(list, size, p.list[i])) {
+			cur++;
+		}
+	}
+	Plenty plus(size + cur);
+	for (int i = 0; i < size; i++) {
+		plus.list[i] = list[i];
+	}
+	int j = 0;
+	for (int i = 0; i < p.size; i++) {
+		if (chek(list, size, p.list[i])) {
+			plus.list[size + j] = p.list[i];
+			j++;
+		}
+	}
+	return plus;
+}
+Plenty Plenty::operator*(const Plenty& p) {             //      оператор умножения множеств
+	int cur = 0;
+	for (int i = 0; i < p.size; i++) {
+		if (!chek(list, size, p.list[i])) {
+			cur++;
+		}
+	}
+	if (!cur) {
+		std::cout << "None";
+		return Plenty(0);
+	}
+	Plenty mult(cur);
+	int j = 0;
+	for (int i = 0; i < p.size; i++) {
+		if (!chek(list, size, p.list[i])) {
+			mult.list[j] = p.list[i];
+			j++;
+		}
+	}
+	return mult;
+}
+Plenty& Plenty::operator+(const int value) {            //      оператор прибавления к множеству элемента с конца
+	return add(value);
+}
+std::ostream& operator<<(std::ostream& os, const Plenty& p) {       //     оператор вывода
+	for (int i = 0; i < p.size; i++) {
+		os << p.list[i];
+		if (i < p.size - 1) {
+			os << ";";
+		}
+	}
+	os << ")" << "\n";
+	return os;
+}
+
+bool Plenty::chek(int arr[], int size, int value) {        //  функция проверки совпадений элементов
+	for (int i = 0; i < size; i++) {
+		if (arr[i] == value) {
+			return 0;
+		}
+	}
+	return 1;
+}
+void print_size(Plenty& pl) {
+	std::cout << pl.size << std::endl;
+}
+
+                      //      здесь начинается файл с классом и заголовками функций
+#pragma once
+#include <iostream>
+class Plenty {
+private:
+	int* list=NULL;
+	int size;
+	bool chek(int arr[], int size, int value);
+public:
+	Plenty(int size);      
+	~Plenty();
+	Plenty(const Plenty& p);
+	Plenty& add(int value);
+	Plenty operator+(const Plenty& p);
+	Plenty operator*(const Plenty& p);
+	Plenty& operator+(const int value);
+	friend std::ostream& operator<<(std::ostream& os, const Plenty& p);
+	friend void print_size(Plenty& pl);
+};
+                           //    здесь начинается main
+#include <iostream>
+#include "Plenty.h"
+#include <cstdlib>
+#include <ctime>
+int main()
+{
+	srand(time(NULL));
+	Plenty A(4), B(7);
+	std::cout << A;
+	std::cout << B;
+	std::cout << A + B;
+	std::cout << A * B;
+	std::cout << A + 10;
+	A.add(175);
+	std::cout << A;
+
+}
