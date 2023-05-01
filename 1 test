@@ -1,0 +1,67 @@
+#include <iostream>
+
+char* remove_dublicates(char* str);
+char* remove_char(char* str, unsigned pos);
+unsigned str_len(char* str);
+unsigned scr_out(char* str1, char* str2);
+
+int main()
+{
+	const unsigned buf_size = 50;
+	char str1[buf_size] = "aaaabcdeffffg\0";
+	char str2[buf_size] = "affff \0";
+	remove_dublicates(str1);
+	printf("%s\n", remove_dublicates(str1));
+	printf("%d\n", scr_out(str1, str2));
+}
+
+
+char* remove_dublicates(char* str)
+{
+	unsigned count = 1, i = 0, j, flag;
+	while (str[i])
+	{
+		flag = 1;
+		for (j = 0; j < count; j++)
+			if (str[j] == str[i])
+			{
+				flag = 0;
+				break;
+			}
+		if (flag)
+			str[count++] = str[i];
+		i++;
+	}
+	str[count] = '\0';
+	return str;
+}
+
+char* remove_char(char* str, unsigned pos)
+{
+	do
+		str[pos] = str[pos + 1];
+	while (str[pos++]);
+	return str;
+}
+
+unsigned scr_out(char* str1, char* str2)
+{
+	for (unsigned k = 0; k < str_len(str1); k++) {
+		unsigned i = 0;
+		do
+			if (str2[i] == str1[k]) {
+				str1 = remove_char(str1, k);
+			}
+		while (str2[i++]);
+	}
+	return str_len(str1);
+}
+
+unsigned str_len(char* str)
+{
+	unsigned i = 0, count = 0;
+	while (str[i]) {
+		i++;
+	}
+	return i;
+}
